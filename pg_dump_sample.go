@@ -8,6 +8,7 @@ import (
 	"os/user"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/cbroglie/mustache"
 	flags "github.com/jessevdk/go-flags"
@@ -252,7 +253,7 @@ func dumpTable(w io.Writer, db *pg.DB, table string) error {
 
 func readPassword(username string) (string, error) {
 	fmt.Printf("Password for %s: ", username)
-	password, err := terminal.ReadPassword(0)
+	password, err := terminal.ReadPassword(int(syscall.Stdin))
 	fmt.Print("\n")
 	return string(password), err
 }
