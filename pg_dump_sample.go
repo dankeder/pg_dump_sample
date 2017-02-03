@@ -262,7 +262,7 @@ func dumpTable(w io.Writer, db *pg.DB, table string) error {
 }
 
 func readPassword(username string) (string, error) {
-	fmt.Printf("Password for %s: ", username)
+	fmt.Fprintf(os.Stderr, "Password for %s: ", username)
 	password, err := terminal.ReadPassword(int(syscall.Stdin))
 	fmt.Print("\n")
 	return string(password), err
