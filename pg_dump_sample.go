@@ -84,6 +84,7 @@ type ManifestIterator struct {
 	db       *pg.DB
 	manifest *Manifest
 	todo     map[string]ManifestItem
+	done     map[string]ManifestItem
 	stack    []string
 }
 
@@ -91,6 +92,7 @@ func NewManifestIterator(db *pg.DB, manifest *Manifest) *ManifestIterator {
 	m := ManifestIterator{
 		db,
 		manifest,
+		make(map[string]ManifestItem),
 		make(map[string]ManifestItem),
 		make([]string, 0),
 	}
@@ -122,6 +124,13 @@ func (m *ManifestIterator) Next() (*ManifestItem, error) {
 
 	todoDeps := make([]string, 0)
 	for _, dep := range deps {
+		_, is_todo := m.todo[dep]
+		_, is_done := m.done[dep]
+		if !is_todo && !is_done {
+			// A new dependency table not present in the manifest file was
+			// found, create a default entry for it
+			m.todo[dep] = ManifestItem{Table: dep}
+		}
 		if _, ok := m.todo[dep]; ok && table != dep {
 			todoDeps = append(todoDeps, dep)
 		}
@@ -133,6 +142,7 @@ func (m *ManifestIterator) Next() (*ManifestItem, error) {
 	}
 
 	result := m.todo[table]
+	m.done[table] = m.todo[table]
 	delete(m.todo, table)
 
 	return &result, nil
