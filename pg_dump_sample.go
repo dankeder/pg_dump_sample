@@ -66,6 +66,7 @@ type Options struct {
 	ManifestFile string
 	OutputFile   string
 	Database     string
+	UseTls       bool
 }
 
 type ManifestItem struct {
@@ -156,6 +157,7 @@ func parseArgs() (*Options, error) {
 		NoPassword   bool   `short:"w" long:"no-password" description:"never prompt for password"`
 		ManifestFile string `short:"m" long:"manifest-file" description:"path to manifest file"`
 		OutputFile   string `short:"f" long:"file" description:"path to output file"`
+		UseTls       bool   `short:"s" long:"tls" description:"use SSL/TLS database connection"`
 		Help         bool   `long:"help" description:"show help"`
 	}
 
@@ -209,6 +211,7 @@ func parseArgs() (*Options, error) {
 		NoPassword:   opts.NoPassword,
 		ManifestFile: opts.ManifestFile,
 		OutputFile:   opts.OutputFile,
+		UseTls:       opts.UseTls,
 		Database:     args[0],
 	}, nil
 }
@@ -415,8 +418,8 @@ func main() {
 	db, err := connectDB(&pg.Options{
 		Addr:     fmt.Sprintf("%s:%d", opts.Host, opts.Port),
 		Database: opts.Database,
+		SSL:      opts.UseTls,
 		User:     opts.Username,
-		SSL:      false,
 	})
 	if err != nil {
 		password := ""
@@ -433,9 +436,9 @@ func main() {
 		db, err = connectDB(&pg.Options{
 			Addr:     fmt.Sprintf("%s:%d", opts.Host, opts.Port),
 			Database: opts.Database,
+			SSL:      opts.UseTls,
 			User:     opts.Username,
 			Password: password,
-			SSL:      false,
 		})
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
