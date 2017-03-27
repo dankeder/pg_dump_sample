@@ -63,6 +63,7 @@ Available command-line options:
       -w, --no-password    never prompt for password
       -m, --manifest-file= path to manifest file
       -f, --file=          path to output file
+      -s, --tls=           use SSL/TLS database connection
           --help           show help
 
 The available command-line options are heavily inspired by
