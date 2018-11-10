@@ -26,10 +26,10 @@ database with a small dataset for testing or development.
   They can be loaded by standard tools such as `psql(1)` or processed further.
 
 
-## How to compile/install
+## How to build
 
 The `pg_dump_sample` is written in Go. You need to [setup the Go compiler and
-setup environment](https://golang.org/doc/install) first. Then run:
+setup environment](https://golang.org/doc/install) first to build it.
 
     go get github.com/dankeder/pg_dump_sample
 

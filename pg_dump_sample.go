@@ -151,14 +151,14 @@ func (m *ManifestIterator) Next() (*ManifestItem, error) {
 
 func parseArgs() (*Options, error) {
 	var opts struct {
-		Host         string `short:"h" long:"host" default:"/tmp" default-mask:"local socket" description:"database server host or socket directory"`
-		Port         string `short:"p" long:"port" default:"5432" description:"database server port"`
-		Username     string `short:"U" long:"username" default-mask:"current user" description:"database user name"`
-		NoPassword   bool   `short:"w" long:"no-password" description:"never prompt for password"`
-		ManifestFile string `short:"m" long:"manifest-file" description:"path to manifest file"`
-		OutputFile   string `short:"f" long:"file" description:"path to output file"`
-		UseTls       bool   `short:"s" long:"tls" description:"use SSL/TLS database connection"`
-		Help         bool   `long:"help" description:"show help"`
+		Host         string `short:"h" long:"host" default:"/tmp" default-mask:"local socket" description:"Database server host or socket directory"`
+		Port         string `short:"p" long:"port" default:"5432" description:"Database server port"`
+		Username     string `short:"U" long:"username" default-mask:"current user" description:"Database user name"`
+		NoPassword   bool   `short:"w" long:"no-password" description:"Don't prompt for password"`
+		ManifestFile string `short:"f" long:"manifest-file" description:"Path to manifest file"`
+		OutputFile   string `short:"o" long:"output-file" description:"Path to the output file"`
+		UseTls       bool   `short:"s" long:"tls" description:"Use SSL/TLS database connection"`
+		Help         bool   `long:"help" description:"Show help"`
 	}
 
 	parser := flags.NewParser(&opts, flags.None)
