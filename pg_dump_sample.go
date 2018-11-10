@@ -59,14 +59,14 @@ COPY %s (%s) FROM stdin;
 )
 
 type Options struct {
-	Host         string
-	Port         int
-	Username     string
-	NoPassword   bool
-	ManifestFile string
-	OutputFile   string
-	Database     string
-	UseTls       bool
+	Host             string
+	Port             int
+	Username         string
+	NoPasswordPrompt bool
+	ManifestFile     string
+	OutputFile       string
+	Database         string
+	UseTls           bool
 }
 
 type ManifestItem struct {
@@ -154,7 +154,7 @@ func parseArgs() (*Options, error) {
 		Host         string `short:"h" long:"host" default:"/tmp" default-mask:"local socket" description:"Database server host or socket directory"`
 		Port         string `short:"p" long:"port" default:"5432" description:"Database server port"`
 		Username     string `short:"U" long:"username" default-mask:"current user" description:"Database user name"`
-		NoPassword   bool   `short:"w" long:"no-password" description:"Don't prompt for password"`
+		NoPasswordPrompt bool   `short:"w" long:"no-password" description:"Don't prompt for password"`
 		ManifestFile string `short:"f" long:"manifest-file" description:"Path to manifest file"`
 		OutputFile   string `short:"o" long:"output-file" description:"Path to the output file"`
 		UseTls       bool   `short:"s" long:"tls" description:"Use SSL/TLS database connection"`
@@ -205,14 +205,14 @@ func parseArgs() (*Options, error) {
 	}
 
 	return &Options{
-		Host:         opts.Host,
-		Port:         port,
-		Username:     opts.Username,
-		NoPassword:   opts.NoPassword,
-		ManifestFile: opts.ManifestFile,
-		OutputFile:   opts.OutputFile,
-		UseTls:       opts.UseTls,
-		Database:     args[0],
+		Host:             opts.Host,
+		Port:             port,
+		Username:         opts.Username,
+		NoPasswordPrompt: opts.NoPasswordPrompt,
+		ManifestFile:     opts.ManifestFile,
+		OutputFile:       opts.OutputFile,
+		UseTls:           opts.UseTls,
+		Database:         args[0],
 	}, nil
 }
 
@@ -384,6 +384,7 @@ func makeDump(db *pg.DB, manifest *Manifest, w io.Writer) error {
 }
 
 func main() {
+	// Parse command-line arguments
 	opts, err := parseArgs()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
@@ -423,8 +424,8 @@ func main() {
 	})
 	if err != nil {
 		password := ""
-		if !opts.NoPassword {
-			// Read database password
+		if !opts.NoPasswordPrompt {
+			// Read database password from the terminal
 			password, err = readPassword(opts.Username)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error: %v\n", err)
