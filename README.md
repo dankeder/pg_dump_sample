@@ -1,5 +1,4 @@
-`pg_dump_sample`
-===============
+# pg_dump_sample
 
 This is a simple tool for dumping a sample of data from a PostgreSQL database.
 The resulting dump can be loaded back into an new database using standard tools
@@ -7,15 +6,13 @@ The resulting dump can be loaded back into an new database using standard tools
 
 
 
-Why would I want this?
-----------------------
+## Why would I want this?
 
 It is useful if you have a huge PostgreSQL database and you need a
 database with a small dataset for testing or development.
 
 
-Features
---------
+## Features
 
 - Data sampling: Dump either all rows of a table or only rows matching the
   specified query.
@@ -29,8 +26,7 @@ Features
   They can be loaded by standard tools such as `psql(1)` or processed further.
 
 
-How to compile/install
-----------------------
+## How to compile/install
 
 The `pg_dump_sample` is written in Go. You need to [setup the Go compiler and
 setup environment](https://golang.org/doc/install) first. Then run:
@@ -44,8 +40,7 @@ If it went well you should be able to run it:
 If not check that you have `$GOPATH/bin` in your `$PATH`.
 
 
-How to use
-----------
+## How to use
 
 A quick example:
 
@@ -123,27 +118,23 @@ the rows use the `query` to specify a SELECT SQL statement which returns the
 rows you want to dump.
 
 
-TODO
-----
+## TODO
 
 - Use separate vars files to override vars from manifest?
 - Allow setting vars using command-line options?
 
 
-Contributing
-------------
+## Contributing
 
 - If you find a new bug, a missing feature, etc. please create a ticket in Isuses.
 - Contributions are very welcome - just open a pull-request.
 
 
-Licence
-=======
+# Licence
 
 MIT
 
 
-Author
-======
+# Author
 
 Dan Keder <dan.keder@gmail.com>
