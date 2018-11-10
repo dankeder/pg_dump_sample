@@ -1,5 +1,7 @@
 # pg_dump_sample
 
+[![Build Status](https://travis-ci.org/dankeder/pg_dump_sample.svg?branch=master)](https://travis-ci.org/dankeder/pg_dump_sample)
+
 This is a simple tool for dumping a sample of data from a PostgreSQL database.
 The resulting dump can be loaded back into an new database using standard tools
 (e.g. `psql(1)`).
