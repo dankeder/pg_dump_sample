@@ -71,13 +71,13 @@ It is also possible to use environmental variables to set the options.
 Note that the environmental variables have lower precenence than command-line
 options. The supported variables are:
 
-    | Environmental variable    | Description                         |
-    |  ------------------------ | ----------------------------------- |
-    | `PGHOST`                  | `-h, --host`                        |
-    | `PGPORT`                  | `-p, --port`                        |
-    | `PGUSER`                  | `-U, --username`                    |
-    | `PGPASSWORD`              | Used to set the password. Use of this environment variable is not recommended for security reasons (some operating systems allow non-root users to see process environment variables via ps)
-    | `PGDATABASE`              | database                            |
+| Environmental variable    | Description                         |
+|  ------------------------ | ----------------------------------- |
+| `PGHOST`                  | `-h, --host`                        |
+| `PGPORT`                  | `-p, --port`                        |
+| `PGUSER`                  | `-U, --username`                    |
+| `PGPASSWORD`              | Used to set the password. Use of this environment variable is not recommended for security reasons (some operating systems allow non-root users to see process environment variables via ps)
+| `PGDATABASE`              | database                            |
 
 
 ### Manifest file
