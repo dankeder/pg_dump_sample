@@ -1,0 +1,51 @@
+#
+# https://blog.questionable.services/article/build-go-binaries-travis-ci-github/
+#
+language: go
+sudo: false
+matrix:
+  include:
+    # "1.x" always refers to the latest Go version, inc. the patch release.
+    # e.g. "1.x" is 1.11 until 1.11.1 is available.
+    - go: 1.x
+      env: LATEST=true
+    # - go: "1.7.x"
+    # - go: "1.8.x"
+    # - go: "1.9.x"
+    # - go: "1.10.x"
+    # - go: "1.11.x"
+    # - go: "tip"
+
+before_install:
+  # gox simplifies building for multiple architectures
+  - go get github.com/mitchellh/gox
+
+install:
+  - # skip
+
+script:
+  - go get -t -v ./...
+  - diff -u <(echo -n) <(gofmt -d .)
+  - go vet $(go list ./... | grep -v /vendor/)
+  - go test -v -race ./...
+  # Only build binaries from the latest Go release.
+  - if [ "${LATEST}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64 arm" -output="pg_dump_sample.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: EOXlAWik+XjZh9tgimsZId4MNKIEcqyBdweTrQBPOq/Ej2lzHuCGkC/u8Z9oRFbV5MvRMrpnbF1ZMvngGyn821OghDoPA9v18gtYCNEKvbYDQRIY+4rBsJUYR1v6QETj3kiNuZbgHsMHhK+ebv2FR+4syG0awuwJ+KVVlTWDofzQaupVJ5mNCHb+A1oAVNI74EmoI5KTfN3WFdvy/44UPQ3lafYXq+mBIO8HmRMYyB1dFPKI009m8iB3kX3rdQz2awEs1bYPPyLfr5LU2xMpOVPDGnaHNblZ6apYeiLyNeFjXCqe6fshnrEzKCOJG652XxVoSaJoIC28Bh2GurYzDIb1C1fj/xKPdsJm+vQgxkdiam/b73+tLhqYFXrtvdDZR+EQGwz+xQSuH8trqLZ6LeMaEMgApqOmyypJqMFgu2KktWzfGDbK6dRmiI8haDuNSwYPBLug+sMuxAIfzWa4TnM+QEvihryNB05tPtpArjXpHg5fOmKPKU5YycB89uf2qE13LDxWctuc0/pMlA70bIL65iLu8Gu1BxoRWx99HEO9imVHDRPxf6LJEB7rIk5Ln4tcWuXipKCKiINYM2cPpPuTkmhCoRWLv+AkVK+znsILVYa3csh71/nHggr+eMwfJ0NsKzWwV9i/KExFwmX2wF3gZBfLHR1bAiVI6SSGfm4=
+  file:
+    # The names of the binaries to output, based on the -output template passed to gox.
+    - pg_dump_sample.linux.amd64
+    - pg_dump_sample.darwin.amd64
+    - pg_dump_sample.windows.amd64.exe
+    - pg_dump_sample.linux.arm
+    - pg_dump_sample.darwin.arm
+  on:
+    # What to repository to build
+    repo: dankeder/pg_dump_sample
+    # Only build binaries for tagged commits
+    tags: true
+    condition: $LATEST = true
