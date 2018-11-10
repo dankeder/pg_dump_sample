@@ -65,12 +65,23 @@ The available command-line options are heavily inspired by
 [`pg_dump(1)`](http://www.postgresql.org/docs/9.4/static/app-pgdump.html).
 Anyone familiar with it should feel right at home.
 
-The main difference from `pg_dump(1)` is that `pg_dump_sample` requires a
-manifest file describing how to dump the database.
+It is also possible to use environmental variables to set the options.
+Note that the environmental variables have lower precenence than command-line
+options. The supported variables are:
+
+    | Environmental variable    | Description                         |
+    |  ------------------------ | ----------------------------------- |
+    | `PGHOST`                  | `-h, --host`                        |
+    | `PGPORT`                  | `-p, --port`                        |
+    | `PGUSER`                  | `-U, --username`                    |
+    | `PGPASSWORD`              | Used to set the password. Use of this environment variable is not recommended for security reasons (some operating systems allow non-root users to see process environment variables via ps)
+    | `PGDATABASE`              | database                            |
 
 
 ### Manifest file
 
+The main difference between `pg_dump_sample` and `pg_dump(1)` is that
+`pg_dump_sample` requires a manifest file describing how to dump the database.
 The manifest file is a YAML file describing what tables to dump and how to dump
 them.
 

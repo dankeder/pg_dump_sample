@@ -63,6 +63,7 @@ type Options struct {
 	Port             int
 	Username         string
 	NoPasswordPrompt bool
+	Password         string
 	ManifestFile     string
 	OutputFile       string
 	Database         string
@@ -151,14 +152,14 @@ func (m *ManifestIterator) Next() (*ManifestItem, error) {
 
 func parseArgs() (*Options, error) {
 	var opts struct {
-		Host         string `short:"h" long:"host" default:"/tmp" default-mask:"local socket" description:"Database server host or socket directory"`
-		Port         string `short:"p" long:"port" default:"5432" description:"Database server port"`
-		Username     string `short:"U" long:"username" default-mask:"current user" description:"Database user name"`
+		Host             string `short:"h" long:"host" default:"/tmp" default-mask:"local socket" env:"PGHOST" description:"Database server host or socket directory"`
+		Port             string `short:"p" long:"port" default:"5432" env:"PGPORT" description:"Database server port"`
+		Username         string `short:"U" long:"username" default-mask:"current user" env:"PGUSER" description:"Database user name"`
 		NoPasswordPrompt bool   `short:"w" long:"no-password" description:"Don't prompt for password"`
-		ManifestFile string `short:"f" long:"manifest-file" description:"Path to manifest file"`
-		OutputFile   string `short:"o" long:"output-file" description:"Path to the output file"`
-		UseTls       bool   `short:"s" long:"tls" description:"Use SSL/TLS database connection"`
-		Help         bool   `long:"help" description:"Show help"`
+		ManifestFile     string `short:"f" long:"manifest-file" description:"Path to manifest file"`
+		OutputFile       string `short:"o" long:"output-file" description:"Path to the output file"`
+		UseTls           bool   `short:"s" long:"tls" description:"Use SSL/TLS database connection"`
+		Help             bool   `long:"help" description:"Show help"`
 	}
 
 	parser := flags.NewParser(&opts, flags.None)
@@ -175,21 +176,13 @@ func parseArgs() (*Options, error) {
 		os.Exit(0)
 	}
 
-	if len(args) < 1 {
-		parser.WriteHelp(os.Stderr)
-		return nil, fmt.Errorf("required argument `database` not specified")
-	}
-
-	if len(args) > 1 {
-		parser.WriteHelp(os.Stderr)
-		return nil, fmt.Errorf("only one database may be specified at a time")
-	}
-
+	// Manifest file
 	if opts.ManifestFile == "" {
 		parser.WriteHelp(os.Stderr)
-		return nil, fmt.Errorf("required flag `-m, --manifest-file` not specified")
+		return nil, fmt.Errorf("required flag `-f, --manifest-file` not specified")
 	}
 
+	// Username
 	if opts.Username == "" {
 		currentUser, err := user.Current()
 		if err != nil {
@@ -198,21 +191,37 @@ func parseArgs() (*Options, error) {
 		opts.Username = currentUser.Username
 	}
 
+	// Port
 	port, err := strconv.Atoi(opts.Port)
 	if err != nil {
 		parser.WriteHelp(os.Stderr)
 		return nil, fmt.Errorf("port must be a number 0-65535")
 	}
 
+	// Database
+	Database := ""
+	if len(args) == 0 {
+		Database = os.Getenv("PGDATABASE")
+	} else if len(args) == 1 {
+		Database = args[0]
+	} else if len(args) > 1 {
+		parser.WriteHelp(os.Stderr)
+		return nil, fmt.Errorf("only one database may be specified at a time")
+	}
+
+	// Password
+	Password := os.Getenv("PGPASSWORD")
+
 	return &Options{
 		Host:             opts.Host,
 		Port:             port,
 		Username:         opts.Username,
 		NoPasswordPrompt: opts.NoPasswordPrompt,
+		Password:         Password,
 		ManifestFile:     opts.ManifestFile,
 		OutputFile:       opts.OutputFile,
 		UseTls:           opts.UseTls,
-		Database:         args[0],
+		Database:         Database,
 	}, nil
 }
 
@@ -421,9 +430,10 @@ func main() {
 		Database: opts.Database,
 		SSL:      opts.UseTls,
 		User:     opts.Username,
+		Password: opts.Password,
 	})
 	if err != nil {
-		password := ""
+		password := opts.Password
 		if !opts.NoPasswordPrompt {
 			// Read database password from the terminal
 			password, err = readPassword(opts.Username)
