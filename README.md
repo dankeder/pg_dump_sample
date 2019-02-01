@@ -46,22 +46,22 @@ If not check that you have `$GOPATH/bin` in your `$PATH`.
 
 A quick example:
 
-    pg_dump_sample -m mydb.yaml -h mydbhost.dev -U postgres -f mydb_dump.sql mydb
+    pg_dump_sample -f mydb.yaml -h mydbhost.dev -U postgres -o mydb_dump.sql mydb
 
 Available command-line options:
-
+         
     Usage:
       pg_dump_sample [options] database
 
     Application Options:
-      -h, --host=          database server host or socket directory (default: local socket)
-      -p, --port=          database server port (default: 5432)
-      -U, --username=      database user name (default: current user)
-      -w, --no-password    never prompt for password
-      -m, --manifest-file= path to manifest file
-      -f, --file=          path to output file
-      -s, --tls=           use SSL/TLS database connection
-          --help           show help
+      -h, --host=          Database server host or socket directory (default: local socket) [$PGHOST]
+      -p, --port=          Database server port (default: 5432) [$PGPORT]
+      -U, --username=      Database user name (default: current user) [$PGUSER]
+      -w, --no-password    Don't prompt for password
+      -f, --manifest-file= Path to manifest file
+      -o, --output-file=   Path to the output file
+      -s, --tls            Use SSL/TLS database connection
+          --help           Show help
 
 The available command-line options are heavily inspired by
 [`pg_dump(1)`](http://www.postgresql.org/docs/9.4/static/app-pgdump.html).
